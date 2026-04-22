@@ -3,6 +3,7 @@ var topPlayer,bottomPlayer;
 var topPlayerIdle, bottomPlayerIdle,topPlayerImg,topPlayer,topPlayerRunning,bottomPlayerImg,bottomPlayerRunning;
 var lever, leverImg;
 var button, buttonImg,buttonTouched,buttonIdle1,buttonIdle2; 
+var paredeP,paredeG,plataforma
 
 function preload() {
    bgImg = loadImage("assets/bg.avif");
@@ -16,13 +17,17 @@ function preload() {
     "assets/esqueletobaixo3.png");
    buttonTouched = loadAnimation("assets/Button_0.png",
     "assets/Button_1.png",
-    "assets/Button_2.png");
+    "assets/Button_1.png",
+    "assets/button_2.png");
     buttonIdle1 = loadAnimation("assets/Button_0.png",
     "assets/Button_0.png",
     "assets/Button_0.png");
     buttonIdle2= loadAnimation("assets/Button_2.png",
-    "assets/Button_2.png",
-    "assets/Button_2.png");
+    "assets/button_2.png",
+    "assets/button_2.png");
+    paredeP = loadImage("assets/paredeFina.png")
+    paredeG = loadImage("assets/paredeGorda.png")
+    plataforma = loadImage("assets/plataforma.png")
    
 }
 
@@ -41,7 +46,8 @@ function setup() {
   button.addAnimation("Idle1",buttonIdle1);
   button.addAnimation("Touched",buttonTouched);
   button.addAnimation("Idle2",buttonIdle2);
-}
+  plataforma = createSprite(700,500);
+  paredeG = createSprite(1000,500);
 
 function draw() {
 background(120);
@@ -65,6 +71,11 @@ background(120);
     bottomPlayer.changeAnimation("Running");
     bottomPlayer.mirrorX(-1);
   }
-  drawSprites();
-}
+  if (button.isTouching(bottomPlayer)){
+  button.changeAnimation("Touched") 
+  setTimeout(2000);
+  button.changeAnimation("Idle2")
+  }
 
+  drawSprites();
+}}
