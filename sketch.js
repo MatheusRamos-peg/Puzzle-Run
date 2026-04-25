@@ -2,94 +2,73 @@ var bg, bgImg;
 var topPlayer, bottomPlayer;
 var topPlayerIdle, bottomPlayerIdle, topPlayerRunning, bottomPlayerRunning;
 var lever, leverImg;
-var button, buttonTouched, buttonIdle1, buttonIdle2; 
-var paredeP,paredePImg, paredeG,paredeGImg, plataforma,plataformaImg;
-
-var apertou = false; // controle do botão
+var button, buttonTouched, buttonIdle1, buttonIdle2;
+var paredeP, paredeG, plataforma;
+var plataformaSprite, paredeGSprite, paredePSprite;
+var apertou = false;
 
 function preload() {
-   bgImg = loadImage("assets/bg.avif");
-
-   topPlayerIdle = loadAnimation("assets/esqueleto1.png","assets/esqueleto1.png");  
-   bottomPlayerIdle = loadAnimation("assets/esqueletobaixo1.png","assets/esqueletobaixo1.png");
-
-   topPlayerRunning = loadAnimation(
-    "assets/esqueleto1.png",
-    "assets/esqueleto2.png",
-    "assets/esqueleto3.png"
-   );
-
-   bottomPlayerRunning = loadAnimation(
-    "assets/esqueletobaixo1.png",
-    "assets/esqueletobaixo2.png",
-    "assets/esqueletobaixo3.png"
-   );
-
-   buttonTouched = loadAnimation(
-    "assets/Button_0.png",
-    "assets/Button_1.png",
-    "assets/Button_1.png",
-    "assets/button_2.png"
-   );
-
-   buttonIdle1 = loadAnimation(
-    "assets/Button_0.png",
-    "assets/Button_0.png",
-    "assets/Button_0.png"
-   );
-
-   buttonIdle2 = loadAnimation(
-    "assets/Button_2.png",
-    "assets/button_2.png",
-    "assets/button_2.png"
-   );
-
-   paredePImg = loadImage("assets/paredeFina.png");
-   paredeGImg = loadImage("assets/paredeGorda.png");
-   plataformaImg = loadImage("assets/plataforma.png");
+  bgImg = loadImage("assets/bg.avif");
+  topPlayerIdle = loadAnimation("assets/esqueleto1.png","assets/esqueleto1.png");
+  bottomPlayerIdle = loadAnimation("assets/esqueletobaixo1.png","assets/esqueletobaixo1.png");
+  topPlayerRunning = loadAnimation("assets/esqueleto1.png","assets/esqueleto2.png","assets/esqueleto3.png");
+  bottomPlayerRunning = loadAnimation("assets/esqueletobaixo1.png","assets/esqueletobaixo2.png","assets/esqueletobaixo3.png");
+  buttonTouched = loadAnimation("assets/Button_0.png","assets/Button_1.png","assets/Button_1.png","assets/button_2.png");
+  buttonIdle1 = loadAnimation("assets/Button_0.png","assets/Button_0.png","assets/Button_0.png");
+  buttonIdle2 = loadAnimation("assets/Button_2.png","assets/button_2.png","assets/button_2.png");
+  paredeP = loadImage("assets/paredeFina.png");
+  paredeG = loadImage("assets/paredeGorda.png");
+  plataforma = loadImage("assets/plataforma.png");
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
+  // fundo - primeiro (atrás de tudo)
   bg = createSprite(windowWidth/2, windowHeight/2);
   bg.addImage(bgImg);
   bg.scale = 3.2;
 
-  topPlayer = createSprite(600,500);
-  topPlayer.addAnimation("Idle", topPlayerIdle);
-  topPlayer.addAnimation("Running", topPlayerRunning);
+  // paredes - depois do fundo
+  paredePSprite = createSprite(windowWidth/2 - 600, windowHeight/2);
+  paredePSprite.addImage(paredeP);
+  paredePSprite.scale = 0.3;
 
-  bottomPlayer = createSprite(400,500);
-  bottomPlayer.addAnimation("Idle", bottomPlayerIdle);
-  bottomPlayer.addAnimation("Running", bottomPlayerRunning);
+  paredeGSprite = createSprite(-300, 350);
+  paredeGSprite.addImage(paredeG);
+  paredeGSprite.scale = 1.2;
 
-  button = createSprite(200,500);
+  plataformaSprite = createSprite(500, 750);
+  plataformaSprite.addImage(plataforma);
+  plataformaSprite.scale = 0.5;
+
+  // botão - na frente das paredes
+  button = createSprite(windowWidth/2 - 300, windowHeight/2);
   button.addAnimation("Idle1", buttonIdle1);
   button.addAnimation("Touched", buttonTouched);
   button.addAnimation("Idle2", buttonIdle2);
 
-  plataforma = createSprite(700,500);
-  plataforma.addImage(plataformaImg)
-  plataforma.scale = 0.3;
-  paredeG = createSprite(-350,365);
-  paredeG.scale = 1.09
-  paredeG.addImage(paredeGImg)
-} 
+  // personagens - na frente de tudo
+  topPlayer = createSprite(windowWidth/2, windowHeight/2);
+  topPlayer.addAnimation("Idle", topPlayerIdle);
+  topPlayer.addAnimation("Running", topPlayerRunning);
+
+  bottomPlayer = createSprite(windowWidth/2 - 100, windowHeight/2);
+  bottomPlayer.addAnimation("Idle", bottomPlayerIdle);
+  bottomPlayer.addAnimation("Running", bottomPlayerRunning);
+}
 
 function draw() {
   background(120);
 
-  // reset movimento
   topPlayer.velocityX = 0;
   bottomPlayer.velocityX = 0;
 
-  // controles topPlayer
-  if(keyDown("right")){
+  if (keyDown("right")) {
     topPlayer.velocityX = 5;
     topPlayer.changeAnimation("Running");
     topPlayer.mirrorX(1);
-  } else if(keyDown("left")){
+  } else if (keyDown("left")) {
     topPlayer.velocityX = -5;
     topPlayer.changeAnimation("Running");
     topPlayer.mirrorX(-1);
@@ -97,12 +76,11 @@ function draw() {
     topPlayer.changeAnimation("Idle");
   }
 
-  // controles bottomPlayer
-  if(keyDown("d")){
+  if (keyDown("d")) {
     bottomPlayer.velocityX = 10;
     bottomPlayer.changeAnimation("Running");
     bottomPlayer.mirrorX(1);
-  } else if(keyDown("a")){
+  } else if (keyDown("a")) {
     bottomPlayer.velocityX = -10;
     bottomPlayer.changeAnimation("Running");
     bottomPlayer.mirrorX(-1);
@@ -110,19 +88,21 @@ function draw() {
     bottomPlayer.changeAnimation("Idle");
   }
 
-  // botão com delay (uma vez só)
-  if (button.isTouching(bottomPlayer) && apertou === false){
+  if (button.isTouching(bottomPlayer) && apertou === false) {
     apertou = true;
-
     button.changeAnimation("Touched");
-
-    setTimeout(() => {
+    setTimeout(function() {
       button.changeAnimation("Idle2");
-    }, 1000);
+    }, 2000);
   }
+
+  // câmera segue o topPlayer
+  camera.x = topPlayer.x;
+  camera.y = topPlayer.y;
+
+  // fundo acompanha a câmera
+  bg.x = topPlayer.x;
+  bg.y = topPlayer.y;
 
   drawSprites();
 } 
-
-
-
